@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-loin',
@@ -14,10 +15,9 @@ export class LoinComponent {
     email: new FormControl(null, [Validators.required, Validators.email]),
     password: new FormControl(null, [Validators.required])
   });
-  authService: any;
- // private authService: AuthService,
+ 
 
- constructor( private router: Router) { }
+ constructor( private authService: UserService, private router: Router) { }
 
   login() {
     if (this.form.valid) {
