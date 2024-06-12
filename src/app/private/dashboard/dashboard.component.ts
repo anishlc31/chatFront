@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ChatServiceService } from '../chat-service.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,4 +8,13 @@ import { Component } from '@angular/core';
 })
 export class DashboardComponent {
 
+//  rooms$ = this.chatService.getMyRoom() 
+
+title = this.chatService.getMessage()
+
+  constructor( private chatService : ChatServiceService){}
+
+  OnInit(){
+  //  this.chatService.createRoom()
+  }
 }
