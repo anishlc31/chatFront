@@ -1,8 +1,23 @@
-<!-- <mat-selection-list [multiple]="false">
-    <mat-list-option *ngFor="let room of (rooms$ | async)?.items" [value]="room">
-      Name: {{room.name}} Id: {{room.id}}
-    </mat-list-option>
-</mat-selection-list> -->
+<div>
+  <h2>Create Room</h2>
+  <form [formGroup]="roomForm" (ngSubmit)="createRoom()">
+    <div>
+      <label for="name">Name</label>
+      <input id="name" formControlName="name" required>
+    </div>
+    <div>
+      <label for="description">Description</label>
+      <input id="description" formControlName="description" required>
+    </div>
+    <button type="submit">Create Room</button>
+  </form>
+</div>
 
-
-{{title | async }}
+<div>
+  <h2>Rooms</h2>
+  <ul>
+    <li *ngFor="let room of rooms">
+      {{ room.name }}: {{ room.description }}
+    </li>
+  </ul>
+</div>
