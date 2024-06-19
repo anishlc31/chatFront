@@ -5,6 +5,9 @@ import { PrivateRoutingModule } from './private-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {MatListModule} from '@angular/material/list';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -17,8 +20,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     PrivateRoutingModule,
     MatLineModule,
     MatListModule,
-  
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatPaginatorModule
     
   ]
 })
