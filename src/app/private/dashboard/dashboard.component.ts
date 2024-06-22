@@ -1,59 +1,41 @@
-// import { Component, OnInit } from '@angular/core';
-// import { ChatServiceService } from '../chat-service.service';
-
-// @Component({
-//   selector: 'app-dashboard',
-//   templateUrl: './dashboard.component.html',
-//   styleUrls: ['./dashboard.component.scss']
-// })
-// export class DashboardComponent {
-
-//  rooms$ = this.chatService.getMyRoom() 
-
-
-//   constructor( private chatService : ChatServiceService){}
-
-//   OnInit(){
-//     this.chatService.createRoom()
-//   }
-// }
-
-
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { MatSelectionListChange } from '@angular/material/list';
+import { PageEvent } from '@angular/material/paginator';
+import { Observable } from 'rxjs';
+import { RoomPaginateI } from 'src/app/model/room.interface';
+import { UserI } from 'src/app/model/user.interface';
+import { UserService } from 'src/app/public/user.service';
 import { ChatServiceService } from '../chat-service.service';
+
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
-  rooms: any[] = [];
-  roomForm: FormGroup;
+export class DashboardComponent implements OnInit, AfterViewInit{
 
-  constructor(private chatService: ChatServiceService, private fb: FormBuilder) {
-    this.roomForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required]
-    });
+  rooms$: Observable<RoomPaginateI> = this.chatService.getMyRooms();
+  selectedRoom = null;
+  user: UserI = this.authService.getLoggedInUser();
+  
+
+  constructor(private chatService: ChatServiceService, private authService: UserService) { }
+
+  ngOnInit() {
+    this.chatService.emitPaginateRooms(10, 0);
   }
 
-  ngOnInit(): void {
-    this.chatService.getRooms().subscribe((rooms: any) => {
-      this.rooms = rooms.items;
-    });
-
-    this.chatService.onError().subscribe((error: any) => {
-      console.error('Error:', error);
-    });
+  ngAfterViewInit() {
+    this.chatService.emitPaginateRooms(10, 0);
   }
 
-  createRoom() {
-    if (this.roomForm.valid) {
-      this.chatService.createRoom(this.roomForm.value);
-      this.roomForm.reset();
-    }
+  onSelectRoom(event: MatSelectionListChange) {
+    this.selectedRoom = event.source.selectedOptions.selected[0].value;
   }
+
+  onPaginateRooms(pageEvent: PageEvent) {
+    this.chatService.emitPaginateRooms(pageEvent.pageSize, pageEvent.pageIndex);
+  }
+
 }
-
