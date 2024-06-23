@@ -1,41 +1,27 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { MatSelectionListChange } from '@angular/material/list';
-import { PageEvent } from '@angular/material/paginator';
-import { Observable } from 'rxjs';
-import { RoomPaginateI } from 'src/app/model/room.interface';
-import { UserI } from 'src/app/model/user.interface';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/public/user.service';
-import { ChatServiceService } from '../chat-service.service';
-
+import { UserI } from 'src/app/model/user.interface';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, AfterViewInit{
+export class DashboardComponent implements OnInit {
+  users: UserI[] = [];
+  selectedUser: UserI;
 
-  rooms$: Observable<RoomPaginateI> = this.chatService.getMyRooms();
-  selectedRoom = null;
-  user: UserI = this.authService.getLoggedInUser();
-  
+  constructor(private userService: UserService) { }
 
-  constructor(private chatService: ChatServiceService, private authService: UserService) { }
-
-  ngOnInit() {
-    this.chatService.emitPaginateRooms(10, 0);
+  ngOnInit(): void {
+    this.userService.getAllUsers().subscribe((data) => {
+      this.users = data;
+    }, (error) => {
+      console.error('Error fetching users:', error);
+    });
   }
 
-  ngAfterViewInit() {
-    this.chatService.emitPaginateRooms(10, 0);
+  selectUser(user: UserI): void {
+    this.selectedUser = user;
   }
-
-  onSelectRoom(event: MatSelectionListChange) {
-    this.selectedRoom = event.source.selectedOptions.selected[0].value;
-  }
-
-  onPaginateRooms(pageEvent: PageEvent) {
-    this.chatService.emitPaginateRooms(pageEvent.pageSize, pageEvent.pageIndex);
-  }
-
 }
