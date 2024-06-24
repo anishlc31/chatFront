@@ -16,6 +16,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   messages: any[] = [];
   currentUser: UserI | null = null;
   newMessage: string = '';
+  displayedMessagesCount: number = 25;
 
   constructor(
     private webSocketService: ChatService,
@@ -47,6 +48,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedUser'] && changes['selectedUser'].currentValue && this.currentUser) {
+      this.messages = [];
       this.loadMessagesForUser(this.selectedUser!.id);
     }
   }
@@ -71,15 +73,26 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
   loadMessagesForUser(userId: string): void {
     if (this.currentUser) {
-      this.webSocketService.getMessages(this.currentUser.id, userId).subscribe((messages) => {
-        this.messages = messages;
+      this.webSocketService.getMessages(this.currentUser.id, userId, 0, this.displayedMessagesCount).subscribe((messages) => {
+        this.messages = messages.reverse(); // Reverse to show the most recent messages first
         this.scrollToBottom();
+      });
+    }
+  }
+
+  loadMoreMessages(): void {
+    if (this.currentUser && this.selectedUser) {
+      const skip = this.messages.length;
+      const take = this.displayedMessagesCount;
+      this.webSocketService.getMessages(this.currentUser.id, this.selectedUser.id, skip, take).subscribe((messages) => {
+        this.messages = [...messages.reverse(), ...this.messages]; // Prepend new messages
       });
     }
   }
 
   onUserSelect(user: UserI): void {
     this.selectedUser = user;
+    this.messages = [];
     this.loadMessagesForUser(user.id);
   }
 
