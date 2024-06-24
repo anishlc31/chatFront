@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/app/public/user.service';
 import { UserI } from 'src/app/model/user.interface';
@@ -8,8 +8,10 @@ import { UserI } from 'src/app/model/user.interface';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnChanges {
+export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   @Input() selectedUser: UserI | null = null;
+  @ViewChild('messageContainer') private messageContainer!: ElementRef;
+
   users: UserI[] = [];
   messages: any[] = [];
   currentUser: UserI | null = null;
@@ -26,13 +28,15 @@ export class ChatComponent implements OnInit, OnChanges {
 
     if (this.currentUser) {
       this.userService.getAllUsers().subscribe((data) => {
-        this.users = data;
+        // Filter out the current user from the users list
+        this.users = data.filter(user => user.id !== this.currentUser!.id);
       });
 
       this.webSocketService.joinRoom(this.currentUser.id);
 
       this.webSocketService.receiveMessage((message) => {
         this.messages.push(message);
+        this.scrollToBottom();
       });
 
       if (this.selectedUser) {
@@ -47,6 +51,10 @@ export class ChatComponent implements OnInit, OnChanges {
     }
   }
 
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedUser && this.currentUser) {
       const message = {
@@ -57,6 +65,7 @@ export class ChatComponent implements OnInit, OnChanges {
       this.webSocketService.sendMessage(message);
       this.messages.push(message);
       this.newMessage = '';
+      this.scrollToBottom();
     }
   }
 
@@ -64,6 +73,7 @@ export class ChatComponent implements OnInit, OnChanges {
     if (this.currentUser) {
       this.webSocketService.getMessages(this.currentUser.id, userId).subscribe((messages) => {
         this.messages = messages;
+        this.scrollToBottom();
       });
     }
   }
@@ -71,5 +81,15 @@ export class ChatComponent implements OnInit, OnChanges {
   onUserSelect(user: UserI): void {
     this.selectedUser = user;
     this.loadMessagesForUser(user.id);
+  }
+
+  private scrollToBottom(): void {
+    if (this.messageContainer) {
+      try {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.error('Scroll to bottom failed', err);
+      }
+    }
   }
 }
