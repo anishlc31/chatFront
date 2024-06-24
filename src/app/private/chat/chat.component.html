@@ -12,7 +12,8 @@
       <h2>Chat with {{ selectedUser.Username }}</h2>
     </div>
     <div class="chat-messages" #messageContainer>
-      <div *ngFor="let message of messages" [class.own]="message.senderId === currentUser.id" class="message-box">
+      <button *ngIf="messages.length >= displayedMessagesCount" (click)="loadMoreMessages()">See More</button>
+      <div *ngFor="let message of messages" [class.own]="message.senderId === currentUser?.id" class="message-box">
         <span>{{ message.content }}</span>
       </div>
     </div>
