@@ -22,29 +22,33 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     private webSocketService: ChatService,
     private userService: UserService
   ) {}
-
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
     console.log(this.currentUser);
-
+  
     if (this.currentUser) {
       this.userService.getAllUsers().subscribe((data) => {
         // Filter out the current user from the users list
         this.users = data.filter(user => user.id !== this.currentUser!.id);
       });
-
+  
       this.webSocketService.joinRoom(this.currentUser.id);
-
+  
       this.webSocketService.receiveMessage((message) => {
         this.messages.push(message);
         this.scrollToBottom();
       });
-
+  
+      this.webSocketService.updateUserList((data) => {
+        this.moveUserToTop(data.userId);
+      });
+  
       if (this.selectedUser) {
         this.loadMessagesForUser(this.selectedUser.id);
       }
     }
   }
+  
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedUser'] && changes['selectedUser'].currentValue && this.currentUser) {
@@ -103,6 +107,16 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       } catch (err) {
         console.error('Scroll to bottom failed', err);
       }
+    }
+  }
+
+
+
+  private moveUserToTop(userId: string): void {
+    const userIndex = this.users.findIndex(user => user.id === userId);
+    if (userIndex !== -1) {
+      const [user] = this.users.splice(userIndex, 1);
+      this.users.unshift(user); // Move user to the top
     }
   }
 }
