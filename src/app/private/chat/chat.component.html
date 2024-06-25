@@ -4,8 +4,10 @@
     <ul>
       <li *ngFor="let user of users" (click)="onUserSelect(user)" [class.selected]="user === selectedUser">
         {{ user.Username }}
+        <span *ngIf="unseenMessages[user.id]">({{ unseenMessages[user.id] }})</span>
       </li>
     </ul>
+    
   </div>
   <div class="chat-box" *ngIf="selectedUser">
     <div class="chat-header">
