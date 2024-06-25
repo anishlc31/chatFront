@@ -3,6 +3,7 @@ import { Socket } from 'ngx-socket-io';
 import { CustomSocket } from './socket/socket';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { UserI } from '../model/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,9 @@ export class ChatService {
         observer.complete();
       });
     });
+    
+  }
+  updateUserList(callback: (data: { userId: string }) => void) {
+    this.socket.on('updateUserList', callback);
   }
 }
