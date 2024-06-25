@@ -42,4 +42,8 @@ export class ChatService {
   updateUserList(callback: (data: { userId: string }) => void) {
     this.socket.on('updateUserList', callback);
   }
+
+  getUnseenMessageCount(userId: string): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/messages/unseen-count/${userId}`);
+  }
 }
