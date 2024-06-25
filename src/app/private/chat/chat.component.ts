@@ -17,6 +17,8 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   currentUser: UserI | null = null;
   newMessage: string = '';
   displayedMessagesCount: number = 25;
+  unseenMessages: { [key: string]: number } = {}; // Add this property
+
 
   constructor(
     private webSocketService: ChatService,
@@ -30,12 +32,14 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.userService.getAllUsers().subscribe((data) => {
         // Filter out the current user from the users list
         this.users = data.filter(user => user.id !== this.currentUser!.id);
+        this.loadUnseenMessages();
       });
   
       this.webSocketService.joinRoom(this.currentUser.id);
   
       this.webSocketService.receiveMessage((message) => {
         this.messages.push(message);
+        this.updateUnseenMessages(message.senderId, message.receiverId);
         this.scrollToBottom();
       });
   
@@ -75,15 +79,18 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     }
   }
 
+
   loadMessagesForUser(userId: string): void {
     if (this.currentUser) {
       this.webSocketService.getMessages(this.currentUser.id, userId, 0, this.displayedMessagesCount).subscribe((messages) => {
         this.messages = messages.reverse(); // Reverse to show the most recent messages first
         this.scrollToBottom();
+        this.unseenMessages[userId] = 0; // Reset unseen message count when messages are loaded
       });
     }
   }
 
+  
   loadMoreMessages(): void {
     if (this.currentUser && this.selectedUser) {
       const skip = this.messages.length;
@@ -119,4 +126,25 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.users.unshift(user); // Move user to the top
     }
   }
+
+
+
+  private loadUnseenMessages(): void {
+    if (this.currentUser) {
+      this.webSocketService.getUnseenMessageCount(this.currentUser.id).subscribe((counts) => {
+        this.unseenMessages = counts;
+      });
+    }
+  }
+  
+  private updateUnseenMessages(senderId: string, receiverId: string): void {
+    if (this.currentUser?.id === receiverId) {
+      this.unseenMessages[senderId] = (this.unseenMessages[senderId] || 0) + 1;
+    }
+    if (this.currentUser?.id === senderId) {
+      this.unseenMessages[receiverId] = 0;
+    }
+  }
+  
+
 }
