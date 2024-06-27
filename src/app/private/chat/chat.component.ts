@@ -17,20 +17,20 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   currentUser: UserI | null = null;
   newMessage: string = '';
   displayedMessagesCount: number = 25;
-  unseenMessages: { [key: string]: number } = {}; // Add this property
-
+  unseenMessages: { [key: string]: number } = {}; 
+  typingStatus: { [key: string]: boolean } = {}; 
 
   constructor(
     private webSocketService: ChatService,
     private userService: UserService
   ) {}
+
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
     console.log(this.currentUser);
   
     if (this.currentUser) {
       this.userService.getAllUsers().subscribe((data) => {
-        // Filter out the current user from the users list
         this.users = data.filter(user => user.id !== this.currentUser!.id);
         this.loadUnseenMessages();
       });
@@ -38,9 +38,15 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.webSocketService.joinRoom(this.currentUser.id);
   
       this.webSocketService.receiveMessage((message) => {
-        this.messages.push(message);
-        this.updateUnseenMessages(message.senderId, message.receiverId);
-        this.scrollToBottom();
+        if (message.receiverId === this.currentUser?.id && message.senderId === this.selectedUser?.id) {
+          this.messages.push(message);
+          this.updateUnseenMessages(message.senderId, message.receiverId);
+          this.scrollToBottom();
+        }
+      });
+
+      this.webSocketService.updateMessageStatus((data) => {
+        this.updateMessageStatus(data.messageId, data.status);
       });
   
       this.webSocketService.updateUserList((data) => {
@@ -50,9 +56,13 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       if (this.selectedUser) {
         this.loadMessagesForUser(this.selectedUser.id);
       }
+
+      // Typing status
+      this.webSocketService.onUserTyping((data) => {
+        this.typingStatus[data.senderId] = data.typing;
+      });
     }
   }
-  
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedUser'] && changes['selectedUser'].currentValue && this.currentUser) {
@@ -70,33 +80,34 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       const message = {
         senderId: this.currentUser.id,
         receiverId: this.selectedUser.id,
-        content: this.newMessage.trim()
+        content: this.newMessage.trim(),
+        status: 'sent' 
       };
       this.webSocketService.sendMessage(message);
-      this.messages.push(message);
+      this.messages.push(message); // Add the sent message to the sender's view
+      this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser.id, receiverId: this.selectedUser.id });
       this.newMessage = '';
       this.scrollToBottom();
+      this.moveUserToTop(this.selectedUser.id);
     }
   }
-
 
   loadMessagesForUser(userId: string): void {
     if (this.currentUser) {
       this.webSocketService.getMessages(this.currentUser.id, userId, 0, this.displayedMessagesCount).subscribe((messages) => {
-        this.messages = messages.reverse(); // Reverse to show the most recent messages first
+        this.messages = messages.reverse();
         this.scrollToBottom();
-        this.unseenMessages[userId] = 0; // Reset unseen message count when messages are loaded
+        this.unseenMessages[userId] = 0;
       });
     }
   }
 
-  
   loadMoreMessages(): void {
     if (this.currentUser && this.selectedUser) {
       const skip = this.messages.length;
       const take = this.displayedMessagesCount;
       this.webSocketService.getMessages(this.currentUser.id, this.selectedUser.id, skip, take).subscribe((messages) => {
-        this.messages = [...messages.reverse(), ...this.messages]; // Prepend new messages
+        this.messages = [...messages.reverse(), ...this.messages];
       });
     }
   }
@@ -117,17 +128,13 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     }
   }
 
-
-
   private moveUserToTop(userId: string): void {
     const userIndex = this.users.findIndex(user => user.id === userId);
     if (userIndex !== -1) {
       const [user] = this.users.splice(userIndex, 1);
-      this.users.unshift(user); // Move user to the top
+      this.users.unshift(user);
     }
   }
-
-
 
   private loadUnseenMessages(): void {
     if (this.currentUser) {
@@ -136,7 +143,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       });
     }
   }
-  
+
   private updateUnseenMessages(senderId: string, receiverId: string): void {
     if (this.currentUser?.id === receiverId) {
       this.unseenMessages[senderId] = (this.unseenMessages[senderId] || 0) + 1;
@@ -145,6 +152,20 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.unseenMessages[receiverId] = 0;
     }
   }
-  
 
+  private updateMessageStatus(messageId: string, status: string): void {
+    const message = this.messages.find(msg => msg.id === messageId);
+    if (message) {
+      message.status = status;
+    }
+  }
+
+  onMessageInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.value.trim()) {
+      this.webSocketService.sendTypingStatus({ senderId: this.currentUser!.id, receiverId: this.selectedUser!.id });
+    } else {
+      this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser!.id, receiverId: this.selectedUser!.id });
+    }
+  }
 }
