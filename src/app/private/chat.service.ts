@@ -37,13 +37,35 @@ export class ChatService {
         observer.complete();
       });
     });
-    
   }
+
   updateUserList(callback: (data: { userId: string }) => void) {
     this.socket.on('updateUserList', callback);
   }
 
   getUnseenMessageCount(userId: string): Observable<{ [key: string]: number }> {
     return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/messages/unseen-count/${userId}`);
+  }
+
+  updateMessageStatus(callback: (data: { messageId: string, status: string }) => void) {
+    this.socket.on('updateMessageStatus', callback);
+  }
+
+  // Typing status
+
+  sendTypingStatus(data: { senderId: string; receiverId: string }) {
+    this.socket.emit('typing', data);
+  }
+
+  sendStopTypingStatus(data: { senderId: string; receiverId: string }) {
+    this.socket.emit('stopTyping', data);
+  }
+
+  onUserTyping(callback: (data: { senderId: string; typing: boolean }) => void) {
+    this.socket.on('userTyping', callback);
+  }
+
+  emitUnseenMessagesCount(data: any) {
+    this.getUnseenMessageCount(data);
   }
 }
