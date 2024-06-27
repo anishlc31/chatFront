@@ -27,7 +27,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-    console.log(this.currentUser);
   
     if (this.currentUser) {
       this.userService.getAllUsers().subscribe((data) => {
@@ -38,10 +37,12 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.webSocketService.joinRoom(this.currentUser.id);
   
       this.webSocketService.receiveMessage((message) => {
-        if (message.receiverId === this.currentUser?.id && message.senderId === this.selectedUser?.id) {
-          this.messages.push(message);
-          this.updateUnseenMessages(message.senderId, message.receiverId);
-          this.scrollToBottom();
+        if (message.receiverId === this.currentUser?.id) {
+          if (message.senderId === this.selectedUser?.id) {
+            this.messages.push(message);
+            this.scrollToBottom();
+          }
+          this.updateUnseenMessages(message.senderId);
         }
       });
 
@@ -81,10 +82,10 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         senderId: this.currentUser.id,
         receiverId: this.selectedUser.id,
         content: this.newMessage.trim(),
-        status: 'sent' 
+        status: 'sent'
       };
       this.webSocketService.sendMessage(message);
-      this.messages.push(message); // Add the sent message to the sender's view
+      this.messages.push(message);
       this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser.id, receiverId: this.selectedUser.id });
       this.newMessage = '';
       this.scrollToBottom();
@@ -98,6 +99,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         this.messages = messages.reverse();
         this.scrollToBottom();
         this.unseenMessages[userId] = 0;
+        this.webSocketService.emitUnseenMessagesCount(this.unseenMessages);
       });
     }
   }
@@ -140,17 +142,14 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     if (this.currentUser) {
       this.webSocketService.getUnseenMessageCount(this.currentUser.id).subscribe((counts) => {
         this.unseenMessages = counts;
+        this.webSocketService.emitUnseenMessagesCount(this.unseenMessages);
       });
     }
   }
 
-  private updateUnseenMessages(senderId: string, receiverId: string): void {
-    if (this.currentUser?.id === receiverId) {
-      this.unseenMessages[senderId] = (this.unseenMessages[senderId] || 0) + 1;
-    }
-    if (this.currentUser?.id === senderId) {
-      this.unseenMessages[receiverId] = 0;
-    }
+  private updateUnseenMessages(senderId: string): void {
+    this.unseenMessages[senderId] = (this.unseenMessages[senderId] || 0) + 1;
+    this.webSocketService.emitUnseenMessagesCount(this.unseenMessages);
   }
 
   private updateMessageStatus(messageId: string, status: string): void {
