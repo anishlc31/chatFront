@@ -43,9 +43,6 @@ export class ChatService {
     this.socket.on('updateUserList', callback);
   }
 
-  getUnseenMessageCount(userId: string): Observable<{ [key: string]: number }> {
-    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/messages/unseen-count/${userId}`);
-  }
 
   updateMessageStatus(callback: (data: { messageId: string, status: string }) => void) {
     this.socket.on('updateMessageStatus', callback);
@@ -65,7 +62,4 @@ export class ChatService {
     this.socket.on('userTyping', callback);
   }
 
-  emitUnseenMessagesCount(data: any) {
-    this.getUnseenMessageCount(data);
-  }
 }
