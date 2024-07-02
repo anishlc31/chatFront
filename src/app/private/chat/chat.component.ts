@@ -31,7 +31,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     if (this.currentUser) {
       this.userService.getAllUsers().subscribe((data) => {
         this.users = data.filter(user => user.id !== this.currentUser!.id);
-        this.loadUnseenMessages();
       });
   
       this.webSocketService.joinRoom(this.currentUser.id);
@@ -99,7 +98,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         this.messages = messages.reverse();
         this.scrollToBottom();
         this.unseenMessages[userId] = 0;
-        this.webSocketService.emitUnseenMessagesCount(this.unseenMessages);
       });
     }
   }
@@ -138,18 +136,10 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     }
   }
 
-  private loadUnseenMessages(): void {
-    if (this.currentUser) {
-      this.webSocketService.getUnseenMessageCount(this.currentUser.id).subscribe((counts) => {
-        this.unseenMessages = counts;
-        this.webSocketService.emitUnseenMessagesCount(this.unseenMessages);
-      });
-    }
-  }
+
 
   private updateUnseenMessages(senderId: string): void {
     this.unseenMessages[senderId] = (this.unseenMessages[senderId] || 0) + 1;
-    this.webSocketService.emitUnseenMessagesCount(this.unseenMessages);
   }
 
   private updateMessageStatus(messageId: string, status: string): void {
