@@ -38,6 +38,8 @@ export class ChatService {
   }
 
 
+
+//unseen msg count 
   requestUnseenMessageCounts(userId: string) {
     this.socket.emit('requestUnseenMessageCounts', userId);
   }
@@ -58,6 +60,13 @@ export class ChatService {
 
   onUserTyping(callback: (data: { senderId: string; typing: boolean }) => void) {
     this.socket.on('userTyping', callback);
+  }
+
+
+  //for chat status
+
+  getStatusUpdate(callback: (status: string) => void) {
+    this.socket.on('statusUpdate', callback);
   }
 
 }
