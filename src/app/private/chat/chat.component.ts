@@ -41,26 +41,37 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
             this.messages.push(message);
             this.scrollToBottom();
           }
-          this.updateUnseenMessages(message.senderId);
         }
       });
 
-      this.webSocketService.updateMessageStatus((data) => {
-        this.updateMessageStatus(data.messageId, data.status);
+
+      this.webSocketService.getUnseenMessageCounts((counts: any) => {
+        this.unseenMessages = counts;
+      });
+
+      
+  
+      this.webSocketService.getUnseenMessageCounts((counts: any) => {
+        this.unseenMessages = counts;
+        console.log(this.unseenMessages)
       });
   
-      this.webSocketService.updateUserList((data) => {
-        this.moveUserToTop(data.userId);
-      });
-  
+      this.webSocketService.requestUnseenMessageCounts(this.currentUser.id);
+
       if (this.selectedUser) {
-        this.loadMessagesForUser(this.selectedUser.id);
+        this.loadMessagesForUser("hello" +this.selectedUser.id);
       }
+
+
+  
 
       // Typing status
       this.webSocketService.onUserTyping((data) => {
         this.typingStatus[data.senderId] = data.typing;
       });
+
+
+
     }
   }
 
@@ -137,17 +148,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   }
 
 
-
-  private updateUnseenMessages(senderId: string): void {
-    this.unseenMessages[senderId] = (this.unseenMessages[senderId] || 0) + 1;
-  }
-
-  private updateMessageStatus(messageId: string, status: string): void {
-    const message = this.messages.find(msg => msg.id === messageId);
-    if (message) {
-      message.status = status;
-    }
-  }
+ 
 
   onMessageInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
