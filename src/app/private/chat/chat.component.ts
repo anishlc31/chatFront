@@ -19,6 +19,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   displayedMessagesCount: number = 25;
   unseenMessages: { [key: string]: number } = {}; 
   typingStatus: { [key: string]: boolean } = {}; 
+  status : string =''
 
   constructor(
     private webSocketService: ChatService,
@@ -50,7 +51,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       });
 
       
-  
+  //count unseen msg 
       this.webSocketService.getUnseenMessageCounts((counts: any) => {
         this.unseenMessages = counts;
         console.log(this.unseenMessages)
@@ -59,19 +60,20 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.webSocketService.requestUnseenMessageCounts(this.currentUser.id);
 
       if (this.selectedUser) {
-        this.loadMessagesForUser("hello" +this.selectedUser.id);
+        this.loadMessagesForUser(this.selectedUser.id);
       }
-
-
-  
 
       // Typing status
       this.webSocketService.onUserTyping((data) => {
         this.typingStatus[data.senderId] = data.typing;
       });
 
+      //chat status 
 
-
+      this.webSocketService.getStatusUpdate((status: string) => {
+        this.status = status;
+      });
+    
     }
   }
 
@@ -92,8 +94,10 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         senderId: this.currentUser.id,
         receiverId: this.selectedUser.id,
         content: this.newMessage.trim(),
-        status: 'sent'
       };
+
+      this.status = 'SENT';
+
       this.webSocketService.sendMessage(message);
       this.messages.push(message);
       this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser.id, receiverId: this.selectedUser.id });
