@@ -70,9 +70,27 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
       //chat status 
 
-      this.webSocketService.getStatusUpdate((status: string) => {
-        this.status = status;
+      // this.webSocketService.getStatusUpdate((status: string) => {
+      //   this.status = status;
+      // });
+
+
+      this.webSocketService.getStatusUpdate((statusUpdate: { messageId: string; status: string }) => {
+        const message = this.messages.find(msg => msg.id === statusUpdate.messageId);
+        if (message) {
+          message.status = statusUpdate.status;
+        } else if (statusUpdate.status === 'SEEN') {
+          this.messages.forEach(msg => {
+            if (msg.senderId === this.currentUser?.id) {
+              msg.status = 'SEEN';
+            }
+          });
+        }
       });
+    
+      //load conversition
+     // this.loadConversations();
+
     
     }
   }
@@ -94,9 +112,8 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         senderId: this.currentUser.id,
         receiverId: this.selectedUser.id,
         content: this.newMessage.trim(),
+       status:'SENT'
       };
-
-      this.status = 'SENT';
 
       this.webSocketService.sendMessage(message);
       this.messages.push(message);
@@ -162,4 +179,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser!.id, receiverId: this.selectedUser!.id });
     }
   }
+
+
+  
 }
