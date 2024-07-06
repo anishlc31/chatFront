@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { CustomSocket } from './socket/socket';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { UserI } from '../model/user.interface';
+import { Conversation, UserI } from '../model/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -65,8 +65,23 @@ export class ChatService {
 
   //for chat status
 
-  getStatusUpdate(callback: (status: string) => void) {
+  // getStatusUpdate(callback: (status: string) => void) {
+  //   this.socket.on('statusUpdate', callback);
+  // }
+
+  getStatusUpdate(callback: (statusUpdate: { messageId: string; status: string }) => void) {
     this.socket.on('statusUpdate', callback);
+  }
+
+
+
+  //for user list 
+
+
+  getConversations(userId: string): Observable<Conversation[]> {
+    return this.http.get<Conversation[]>(`${this.apiUrl}/conversations/${userId}`).pipe(
+      map(conversations => conversations.sort((a, b) => new Date(b.updateChatAt).getTime() - new Date(a.updateChatAt).getTime()))
+    );
   }
 
 }

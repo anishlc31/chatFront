@@ -13,6 +13,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
   users: UserI[] = [];
+
   messages: any[] = [];
   currentUser: UserI | null = null;
   newMessage: string = '';
@@ -46,10 +47,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       });
 
 
-      this.webSocketService.getUnseenMessageCounts((counts: any) => {
-        this.unseenMessages = counts;
-      });
-
       
   //count unseen msg 
       this.webSocketService.getUnseenMessageCounts((counts: any) => {
@@ -70,11 +67,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
       //chat status 
 
-      // this.webSocketService.getStatusUpdate((status: string) => {
-      //   this.status = status;
-      // });
-
-
       this.webSocketService.getStatusUpdate((statusUpdate: { messageId: string; status: string }) => {
         const message = this.messages.find(msg => msg.id === statusUpdate.messageId);
         if (message) {
@@ -87,11 +79,8 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
           });
         }
       });
-    
-      //load conversition
-     // this.loadConversations();
-
-    
+  
+     
     }
   }
 
@@ -120,7 +109,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser.id, receiverId: this.selectedUser.id });
       this.newMessage = '';
       this.scrollToBottom();
-      this.moveUserToTop(this.selectedUser.id);
     }
   }
 
@@ -160,13 +148,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     }
   }
 
-  private moveUserToTop(userId: string): void {
-    const userIndex = this.users.findIndex(user => user.id === userId);
-    if (userIndex !== -1) {
-      const [user] = this.users.splice(userIndex, 1);
-      this.users.unshift(user);
-    }
-  }
 
 
  
@@ -179,7 +160,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser!.id, receiverId: this.selectedUser!.id });
     }
   }
-
 
   
 }
