@@ -14,74 +14,80 @@ export class ChatService {
 
   private apiUrl = 'http://localhost:3000';
 
-  joinRoom(userId: string) {
-    this.socket.emit('joinRoom', userId);
-  }
+  // ChatService
 
-  sendMessage(message: { senderId: string; receiverId: string; content: string }) {
-    this.socket.emit('sendMessage', message);
-  }
+joinRoom(userId: string) {
+  this.socket.emit('joinRoom', userId);
+}
 
-  receiveMessage(callback: (message: any) => void) {
-    this.socket.on('receiveMessage', callback);
-  }
+sendMessage(message: { senderId: string; receiverId: string; content: string }) {
+  this.socket.emit('sendMessage', message);
+}
 
-  
+receiveMessage(callback: (message: any) => void) {
+  this.socket.on('receiveMessage', callback);
+}
 
-  getMessages(user1Id: string, user2Id: string, skip: number, take: number): Observable<any[]> {
-    return new Observable((observer) => {
-      this.socket.emit('getMessages', { user1Id, user2Id, skip, take }, (messages: any[]) => {
-        observer.next(messages);
-        observer.complete();
-      });
+getMessages(user1Id: string, user2Id: string, skip: number, take: number): Observable<any[]> {
+  return new Observable((observer) => {
+    this.socket.emit('getMessages', { user1Id, user2Id, skip, take }, (messages: any[]) => {
+      observer.next(messages);
+      observer.complete();
+    });
+  });
+}
+
+requestUnseenMessageCounts(userId: string) {
+  this.socket.emit('requestUnseenMessageCounts', userId);
+}
+
+getUnseenMessageCounts(callback: (counts: any) => void) {
+  this.socket.on('unseenMessageCounts', callback);
+}
+
+sendTypingStatus(data: { senderId: string; receiverId: string }) {
+  this.socket.emit('typing', data);
+}
+
+sendStopTypingStatus(data: { senderId: string; receiverId: string }) {
+  this.socket.emit('stopTyping', data);
+}
+
+onUserTyping(callback: (data: { senderId: string; typing: boolean }) => void) {
+  this.socket.on('userTyping', callback);
+}
+
+getStatusUpdate(callback: (statusUpdate: { messageId: string; status: string }) => void) {
+  this.socket.on('statusUpdate', callback);
+}
+
+getConversationUpdates(callback: (conversation: any) => void) {
+  this.socket.on('conversationUpdate', callback);
+}
+
+requestConversations(userId: string) {
+  this.socket.emit('requestConversations', userId);
+}
+
+getInitialConversations(callback: (conversations: any) => void) {
+  this.socket.on('initialConversations', callback);
+}
+
+
+getSortedConversations(): Observable<any> {
+  return this.socket.fromEvent('initialConversations');
+}
+
+
+  // Update the user list on receiving new conversations
+  updateUserList() {
+    this.getSortedConversations().subscribe((conversations: any[]) => {
+      // Assuming you have a method to update the user list
+      this.updateUsers(conversations);
     });
   }
 
-
-
-//unseen msg count 
-  requestUnseenMessageCounts(userId: string) {
-    this.socket.emit('requestUnseenMessageCounts', userId);
+  updateUsers(conversations: any[]) {
+    // Logic to map conversations to users and update the user list
   }
-
-  getUnseenMessageCounts(callback: (counts: any) => void) {
-    this.socket.on('unseenMessageCounts', callback);
-    }
-
-
-  // Typing status
-  sendTypingStatus(data: { senderId: string; receiverId: string }) {
-    this.socket.emit('typing', data);
-  }
-
-  sendStopTypingStatus(data: { senderId: string; receiverId: string }) {
-    this.socket.emit('stopTyping', data);
-  }
-
-  onUserTyping(callback: (data: { senderId: string; typing: boolean }) => void) {
-    this.socket.on('userTyping', callback);
-  }
-
-
-  //for chat status
-
-  // getStatusUpdate(callback: (status: string) => void) {
-  //   this.socket.on('statusUpdate', callback);
-  // }
-
-  getStatusUpdate(callback: (statusUpdate: { messageId: string; status: string }) => void) {
-    this.socket.on('statusUpdate', callback);
-  }
-
-
-
-  //for user list 
-
-
-  getConversations(userId: string): Observable<Conversation[]> {
-    return this.http.get<Conversation[]>(`${this.apiUrl}/conversations/${userId}`).pipe(
-      map(conversations => conversations.sort((a, b) => new Date(b.updateChatAt).getTime() - new Date(a.updateChatAt).getTime()))
-    );
-  }
-
 }
