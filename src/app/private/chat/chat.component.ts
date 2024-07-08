@@ -13,7 +13,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
   users: UserI[] = [];
-
   messages: any[] = [];
   currentUser: UserI | null = null;
   newMessage: string = '';
@@ -79,8 +78,23 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
           });
         }
       });
+
+      //get conversation updates 
+
+      this.webSocketService.getConversationUpdates((conversation) => {
+        this.updateUserList(conversation);
+      });
   
-     
+      this.webSocketService.getInitialConversations((conversations) => {
+        this.updateUserList(conversations);
+      });
+  
+      this.webSocketService.requestConversations(this.currentUser.id);
+
+    
+  
+      this.webSocketService.updateUserList();
+
     }
   }
 
@@ -159,6 +173,17 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     } else {
       this.webSocketService.sendStopTypingStatus({ senderId: this.currentUser!.id, receiverId: this.selectedUser!.id });
     }
+  }
+
+  private updateUserList(conversations: any[]): void {
+    const sortedUsers = this.users.map(user => {
+      const convo = conversations.find((convo: any) => convo.user1Id === user.id || convo.user2Id === user.id);
+      return { ...user, updateChatAt: convo?.updateChatAt };
+    }).sort((a, b) => {
+      return new Date(b.updateChatAt).getTime() - new Date(a.updateChatAt).getTime();
+    });
+
+    this.users = sortedUsers;
   }
 
   
