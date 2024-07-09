@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { CustomSocket } from './socket/socket';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Conversation, UserI } from '../model/user.interface';
 
@@ -9,80 +9,73 @@ import { Conversation, UserI } from '../model/user.interface';
   providedIn: 'root'
 })
 export class ChatService {
+
   constructor(private socket: CustomSocket, private http: HttpClient) {}
 
   private apiUrl = 'http://localhost:3000';
 
-  joinRoom(userId: string) {
-    this.socket.emit('joinRoom', userId);
-  }
+  // ChatService
 
-  sendMessage(message: { senderId: string; receiverId: string; content: string }) {
-    this.socket.emit('sendMessage', message);
-  }
+joinRoom(userId: string) {
+  this.socket.emit('joinRoom', userId);
+}
 
-  receiveMessage(callback: (message: any) => void) {
-    this.socket.on('receiveMessage', callback);
-  }
 
-  getMessages(user1Id: string, user2Id: string, skip: number, take: number): Observable<any[]> {
-    return new Observable((observer) => {
-      this.socket.emit('getMessages', { user1Id, user2Id, skip, take }, (messages: any[]) => {
-        observer.next(messages);
-        observer.complete();
-      });
+//for send msg 
+sendMessage(message: { senderId: string; receiverId: string; content: string }) {
+  this.socket.emit('sendMessage', message);
+}
+//for recive msg 
+receiveMessage(callback: (message: any) => void) {
+  this.socket.on('receiveMessage', callback);
+}
+
+getMessages(user1Id: string, user2Id: string, skip: number, take: number): Observable<any[]> {
+  return new Observable((observer) => {
+    this.socket.emit('getMessages', { user1Id, user2Id, skip, take }, (messages: any[]) => {
+      observer.next(messages);
+      observer.complete();
     });
-  }
+  });
+}
 
-  requestUnseenMessageCounts(userId: string) {
-    this.socket.emit('requestUnseenMessageCounts', userId);
-  }
 
-  getUnseenMessageCounts(callback: (counts: any) => void) {
-    this.socket.on('unseenMessageCounts', callback);
-  }
+//for unsend msg 
+requestUnseenMessageCounts(userId: string) {
+  this.socket.emit('requestUnseenMessageCounts', userId);
+}
 
-  sendTypingStatus(data: { senderId: string; receiverId: string }) {
-    this.socket.emit('typing', data);
-  }
+getUnseenMessageCounts(callback: (counts: any) => void) {
+  this.socket.on('unseenMessageCounts', callback);
+}
 
-  sendStopTypingStatus(data: { senderId: string; receiverId: string }) {
-    this.socket.emit('stopTyping', data);
-  }
 
-  onUserTyping(callback: (data: { senderId: string; typing: boolean }) => void) {
-    this.socket.on('userTyping', callback);
-  }
+//for typing status
+sendTypingStatus(data: { senderId: string; receiverId: string }) {
+  this.socket.emit('typing', data);
+}
 
-  getStatusUpdate(callback: (statusUpdate: { messageId: string; status: string }) => void) {
-    this.socket.on('statusUpdate', callback);
-  }
+sendStopTypingStatus(data: { senderId: string; receiverId: string }) {
+  this.socket.emit('stopTyping', data);
+}
 
-  getConversationUpdates(callback: (conversation: any) => void) {
-    this.socket.on('conversationUpdate', callback);
-  }
+onUserTyping(callback: (data: { senderId: string; typing: boolean }) => void) {
+  this.socket.on('userTyping', callback);
+}
 
-  requestConversations(userId: string) {
-    this.socket.emit('requestConversations', userId);
-  }
+//for status of msg 
+getStatusUpdate(callback: (statusUpdate: { messageId: string; status: string }) => void) {
+  this.socket.on('statusUpdate', callback);
+}
 
-  getInitialConversations(callback: (conversations: any) => void) {
-    this.socket.on('initialConversations', callback);
-  }
+//for update list 
+getConversationUpdate(callback: (conversation: Conversation) => void) {
+  this.socket.on('conversationUpdate', callback);
+}
 
-  getSortedConversations(): Observable<any> {
-    return this.socket.fromEvent('initialConversations');
-  }
+getConversations(userId: string): Observable<Conversation[]> {
+  return this.http.get<Conversation[]>(`${this.apiUrl}/chat/${userId}`);
+}
 
-  updateUserList() {
-    this.getSortedConversations().subscribe((conversations: any[]) => {
-      this.updateUsers(conversations);
-    });
-  }
 
-  
-
-  updateUsers(conversations: any[]) {
-    // Logic to map conversations to users and update the user list
-  }
 }
