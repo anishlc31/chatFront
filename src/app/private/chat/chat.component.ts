@@ -1,7 +1,7 @@
 import { Component, OnInit, OnChanges, SimpleChanges, Input, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/app/public/user.service';
-import { UserI } from 'src/app/model/user.interface';
+import { Conversation, UserI } from 'src/app/model/user.interface';
 
 @Component({
   selector: 'app-chat',
@@ -13,6 +13,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
   users: UserI[] = [];
+  conversation:Conversation[]=[]
   messages: any[] = [];
   currentUser: UserI | null = null;
   newMessage: string = '';
@@ -20,6 +21,8 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   unseenMessages: { [key: string]: number } = {}; 
   typingStatus: { [key: string]: boolean } = {}; 
   status : string =''
+  updateChatAtMap: { [key: string]: Date } = {}; // New map to track updateChatAt
+
 
   constructor(
     private webSocketService: ChatService,
@@ -32,6 +35,8 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     if (this.currentUser) {
       this.userService.getAllUsers().subscribe((data) => {
         this.users = data.filter(user => user.id !== this.currentUser!.id);
+        this.fetchAndSortConversations();
+
       });
   
       this.webSocketService.joinRoom(this.currentUser.id);
@@ -50,7 +55,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   //count unseen msg 
       this.webSocketService.getUnseenMessageCounts((counts: any) => {
         this.unseenMessages = counts;
-        console.log(this.unseenMessages)
       });
   
       this.webSocketService.requestUnseenMessageCounts(this.currentUser.id);
@@ -79,24 +83,21 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         }
       });
 
-      //get conversation updates 
 
-      this.webSocketService.getConversationUpdates((conversation) => {
-        this.updateUserList(conversation);
-      });
-  
-      this.webSocketService.getInitialConversations((conversations) => {
-        this.updateUserList(conversations);
-      });
-  
-      this.webSocketService.requestConversations(this.currentUser.id);
+      //for update list 
 
-    
-  
-      this.webSocketService.updateUserList();
-
+   this.webSocketService.getConversationUpdate((conversation) => {
+    const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
+    this.updateChatAtMap[userId] = conversation.updateChatAt;
+    this.sortUsersByUpdateChatAt();
+  });
+     
     }
   }
+
+
+
+  
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedUser'] && changes['selectedUser'].currentValue && this.currentUser) {
@@ -175,16 +176,30 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     }
   }
 
-  private updateUserList(conversations: any[]): void {
-    const sortedUsers = this.users.map(user => {
-      const convo = conversations.find((convo: any) => convo.user1Id === user.id || convo.user2Id === user.id);
-      return { ...user, updateChatAt: convo?.updateChatAt };
-    }).sort((a, b) => {
-      return new Date(b.updateChatAt).getTime() - new Date(a.updateChatAt).getTime();
-    });
+  
 
-    this.users = sortedUsers;
+  //for update list 
+  fetchAndSortConversations(): void {
+    if (this.currentUser) {
+      this.webSocketService.getConversations(this.currentUser.id).subscribe((conversations) => {
+        conversations.forEach(conversation => {
+          const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
+          this.updateChatAtMap[userId] = conversation.updateChatAt;
+        });
+        this.sortUsersByUpdateChatAt();
+      });
+    }
   }
+
+
+  sortUsersByUpdateChatAt(): void {
+    this.users.sort((a, b) => {
+      const aUpdate = this.updateChatAtMap[a.id!] || new Date(0);
+      const bUpdate = this.updateChatAtMap[b.id!] || new Date(0);
+      return new Date(bUpdate).getTime() - new Date(aUpdate).getTime();
+    });
+  }
+
 
   
 }
