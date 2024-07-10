@@ -1,0 +1,48 @@
+.userlist {
+    height: 92%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.808);
+  }
+  
+  .read {
+    display: flex;
+  }
+  
+  .all {
+    margin-top: 20px;
+    margin-left: 30px;
+    height: 40px;
+    width: 55px;
+    border-radius: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.932);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-right: 10px; 
+  }
+  
+  .requested {
+    margin-top: 20px;
+    margin-left: 10px;
+    height: 40px;
+    width: 100px;
+    border-radius: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.932);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hr{
+    height: 1px;
+    width: 100%;
+    background-color: gray;
+    margin-top: 10px;
+  }
+  
+
+ 
