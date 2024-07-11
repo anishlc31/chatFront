@@ -12,5 +12,20 @@
       </div>
     </div>
     <div class="hr"></div>
+    <div class="mainpart">
+      <div class="user-list" *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
+        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
+        <ul>
+          <li  >
+            <span class="userName">   {{ user.username }}</span>
+         
+            <span *ngIf="unseenMessages[user.id]">({{ unseenMessages[user.id] }})</span>
+            <span *ngIf="typingStatus[user.id]">Typing...</span>
+          </li>
+          <div class="hr2"></div>
+        </ul>
+
+      </div>
+    </div>
   </div>
   
