@@ -1,18 +1,15 @@
-
-<div class="leftside">
-
-  <div class="headingpart">
-    <img src="./assets/logo/logo3.png" class="logo" alt="logo">
-    <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png" class="notifa" alt="">
-    <img src="https://cdn-icons-png.freepik.com/512/6469/6469169.png" class="addfrnd" alt="">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="searchIcon" alt="search">
-    <div class="profilePic"></div> 
+<div class="container">
+  <div class="leftside">
+    <div class="headingpart">
+      <img src="./assets/logo/logo3.png" class="logo" alt="logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png" class="notifa" alt="">
+      <img src="https://cdn-icons-png.freepik.com/512/6469/6469169.png" class="addfrnd" alt="">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="searchIcon" alt="search" (click)="onSearchClick()">
+      <div class="profilePic"></div>
+    </div>
+    <app-userlist></app-userlist>
   </div>
-
-  <app-userlist></app-userlist>
-
+  <div class="rightside">
+    <app-chat></app-chat>
+  </div>
 </div>
-
-
-<!-- <app-chat [selectedUser]="selectedUser"></app-chat> -->
-
