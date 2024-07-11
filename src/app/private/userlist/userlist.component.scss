@@ -1,7 +1,8 @@
 .userlist {
-  height: 92%;
+  height: 92.3vh;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.808);
+  position: relative;
 }
 
 .read {
@@ -79,6 +80,67 @@
 .hr {
   height: 1px;
   width: 100%;
-  background-color: gray;
+  background-color: black;
   margin-top: 10px;
+}
+
+.hr2{
+  height: 1px;
+  margin-left: 4px;
+  
+  width: 98%;
+  background-color: gray;
+}
+
+
+//for user list 
+
+.user-list {
+  margin-top: -14px;
+  width: 100%;
+  //padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+
+
+.user-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.user-list li {
+  padding: 10px;
+  height: 50px;
+  cursor: pointer;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+
+.user-list li:hover {
+  background-color: gray;
+}
+
+.user-list li.selected {
+  background-color: gray;
+}
+
+
+.userPP{
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 10px;
+  height: 40px;
+  width: 40;
+  border-radius: 50%;
+}
+
+
+.userName{
+  margin-left: 55px;
+  color: white;
+  font-size: 17px;
+  font-weight:600 ;
+
 }
