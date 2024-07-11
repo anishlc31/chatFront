@@ -1,36 +1,7 @@
 .chat-container {
   display: flex;
   height: 100vh;
-}
-
-.user-list {
-  width: 200px;
-  background-color: #f0f0f0;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.user-list h2 {
-  text-align: center;
-}
-
-.user-list ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.user-list li {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.user-list li:hover {
-  background-color: #e0e0e0;
-}
-
-.user-list li.selected {
-  background-color: #d0d0d0;
+  background-color: rgba(0, 0, 0, 0.768);
 }
 
 .chat-box {
@@ -40,10 +11,9 @@
 }
 
 .chat-header {
-  background-color: #f0f0f0;
-  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.401);
   border-bottom: 1px solid #ddd;
-  text-align: center;
+  height: 50px;
 }
 
 .chat-messages {
@@ -100,4 +70,19 @@
 
 .chat-input button:hover {
   background-color: #0056b3;
+}
+
+.userPP {
+  position: absolute;
+  margin-top: 2px;
+  margin-left: 50px;
+  height: 45px;
+  width: 45;
+  border-radius: 50%;
+}
+
+
+.headingUserName{
+  margin-left: 120px;
+
 }
