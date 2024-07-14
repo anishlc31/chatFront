@@ -13,15 +13,15 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
   users: UserI[] = [];
-  conversation:Conversation[]=[]
-  messages: any[] = [];
+  typingStatus: { [key: string]: boolean } = {}; 
   currentUser: UserI | null = null;
+  conversation:Conversation[]=[]
+  unseenMessages: { [key: string]: number } = {}; 
+  updateChatAtMap: { [key: string]: Date } = {}; // New map to track updateChatAt
+  messages: any[] = [];
   newMessage: string = '';
   displayedMessagesCount: number = 25;
-  unseenMessages: { [key: string]: number } = {}; 
-  typingStatus: { [key: string]: boolean } = {}; 
   status : string =''
-  updateChatAtMap: { [key: string]: Date } = {}; // New map to track updateChatAt
 
 
   constructor(
@@ -33,11 +33,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
     this.currentUser = this.userService.getCurrentUser();
   
     if (this.currentUser) {
-      this.userService.getAllUsers().subscribe((data) => {
-        this.users = data.filter(user => user.id !== this.currentUser!.id);
-        this.fetchAndSortConversations();
 
-      });
   
       this.webSocketService.joinRoom(this.currentUser.id);
   
@@ -52,21 +48,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
 
       
-  //count unseen msg 
-      this.webSocketService.getUnseenMessageCounts((counts: any) => {
-        this.unseenMessages = counts;
-      });
-  
-      this.webSocketService.requestUnseenMessageCounts(this.currentUser.id);
 
-      if (this.selectedUser) {
-        this.loadMessagesForUser(this.selectedUser.id);
-      }
-
-      // Typing status
-      this.webSocketService.onUserTyping((data) => {
-        this.typingStatus[data.senderId] = data.typing;
-      });
 
       //chat status 
 
@@ -84,13 +66,7 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
       });
 
 
-      //for update list 
 
-   this.webSocketService.getConversationUpdate((conversation) => {
-    const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
-    this.updateChatAtMap[userId] = conversation.updateChatAt;
-    this.sortUsersByUpdateChatAt();
-  });
      
     }
   }
@@ -177,28 +153,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
   }
 
   
-
-  //for update list 
-  fetchAndSortConversations(): void {
-    if (this.currentUser) {
-      this.webSocketService.getConversations(this.currentUser.id).subscribe((conversations) => {
-        conversations.forEach(conversation => {
-          const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
-          this.updateChatAtMap[userId] = conversation.updateChatAt;
-        });
-        this.sortUsersByUpdateChatAt();
-      });
-    }
-  }
-
-
-  sortUsersByUpdateChatAt(): void {
-    this.users.sort((a, b) => {
-      const aUpdate = this.updateChatAtMap[a.id!] || new Date(0);
-      const bUpdate = this.updateChatAtMap[b.id!] || new Date(0);
-      return new Date(bUpdate).getTime() - new Date(aUpdate).getTime();
-    });
-  }
 
 
   
