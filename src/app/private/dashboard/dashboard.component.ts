@@ -1,27 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/public/user.service';
 import { UserI } from 'src/app/model/user.interface';
+import { UserlistService } from '../userlist.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent  {
   users: UserI[] = [];
-  selectedUser: UserI;
+  selectedUser: UserI | null = null;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService , private userlistservice : UserlistService) { }
 
-  ngOnInit(): void {
-    this.userService.getAllUsers().subscribe((data) => {
-      this.users = data;
-    }, (error) => {
-      console.error('Error fetching users:', error);
-    });
+  onSearchClick() {
+    this.userlistservice.triggerSearchClick();
   }
 
-  selectUser(user: UserI): void {
+
+
+  onUserSelected(user: UserI): void {
     this.selectedUser = user;
   }
+
 }
