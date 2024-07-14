@@ -7,9 +7,12 @@
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="searchIcon" alt="search" (click)="onSearchClick()">
       <div class="profilePic"></div>
     </div>
-    <app-userlist></app-userlist>
-  </div>
+    <app-userlist 
+    [users]="users" 
+    [selectedUser]="selectedUser" 
+    (userSelected)="onUserSelected($event)">
+  </app-userlist>  </div>
   <div class="rightside">
-    <app-chat></app-chat>
+    <app-chat [selectedUser]="selectedUser"></app-chat>
   </div>
 </div>
