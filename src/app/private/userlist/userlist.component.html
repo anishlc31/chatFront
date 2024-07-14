@@ -1,31 +1,32 @@
 <div class="userlist">
-    <div class="userheading">
-      <div class="search">
-        <div class="search-container" *ngIf="showSearchInput">
-          <input type="text" placeholder="Search">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="search-icon" alt="search">
-        </div>
-      </div>
-      <div class="read">
-        <div class="all">All</div>
-        <div class="requested">Requested</div>
+  <div class="userheading">
+    <div class="search">
+      <div class="search-container" *ngIf="showSearchInput">
+        <input type="text" placeholder="Search">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="search-icon" alt="search">
       </div>
     </div>
-    <div class="hr"></div>
-    <div class="mainpart">
-      <div class="user-list" *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
-        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
-        <ul>
-          <li  >
-            <span class="userName">   {{ user.username }}</span>
-         
-            <span *ngIf="unseenMessages[user.id]">({{ unseenMessages[user.id] }})</span>
-            <span *ngIf="typingStatus[user.id]">Typing...</span>
-          </li>
-          <div class="hr2"></div>
-        </ul>
-
-      </div>
+    <div class="read">
+      <div class="all">All</div>
+      <div class="requested">Requested</div>
     </div>
   </div>
-  
+  <div class="hr"></div>
+  <div class="mainpart">
+    <div class="user-list" *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
+      <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
+      <ul>
+        <li>
+          <span class="userName">{{ user.username }}</span>
+          <span *ngIf="unseenMessages[user.id]">({{ unseenMessages[user.id] }})</span>
+          <span *ngIf="typingStatus[user.id]">Typing...</span>
+          <div>
+            <p>{{ lastMessages[user.id] }}</p>
+            <span>{{ lastMessageTimes[user.id] | timeAgo }}</span>
+          </div>
+        </li>
+        <div class="hr2"></div>
+      </ul>
+    </div>
+  </div>
+</div>
