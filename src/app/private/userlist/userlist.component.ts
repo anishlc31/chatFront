@@ -1,6 +1,6 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Conversation, UserI } from 'src/app/model/user.interface';
 import { UserlistService } from './../userlist.service';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/app/public/user.service';
 
@@ -17,8 +17,10 @@ export class UserlistComponent {
   @Output() userSelected = new EventEmitter<UserI>();
 
   currentUser: UserI | null = null;
-  conversation: Conversation[] = [];
+  conversations: Conversation[] = [];
   unseenMessages: { [key: string]: number } = {};
+  lastMessages: { [key: string]: string } = {};
+  lastMessageTimes: { [key: string]: Date } = {};
   updateChatAtMap: { [key: string]: Date } = {};
 
   constructor(
@@ -53,6 +55,8 @@ export class UserlistComponent {
       this.webSocketService.getConversationUpdate((conversation) => {
         const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
         this.updateChatAtMap[userId] = conversation.updateChatAt;
+        this.lastMessages[userId] = conversation.lastMessage;
+        this.lastMessageTimes[userId] = conversation.lastMessageTime;
         this.sortUsersByUpdateChatAt();
       });
     }
@@ -64,6 +68,8 @@ export class UserlistComponent {
         conversations.forEach(conversation => {
           const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
           this.updateChatAtMap[userId] = conversation.updateChatAt;
+          this.lastMessages[userId] = conversation.lastMessage;
+          this.lastMessageTimes[userId] = conversation.lastMessageTime;
         });
         this.sortUsersByUpdateChatAt();
       });
