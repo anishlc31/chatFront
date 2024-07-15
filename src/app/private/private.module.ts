@@ -16,6 +16,9 @@ import {MatIconModule} from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChatComponent } from './chat/chat.component';
 import { UserlistComponent } from './userlist/userlist.component';
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
+import { TruncatePipe } from './pipes/truncate.pipe';
+
 
 //import {MatChipsModule} from '@angular/material/chips';
 
@@ -24,6 +27,8 @@ import { UserlistComponent } from './userlist/userlist.component';
     DashboardComponent,
     ChatComponent,
     UserlistComponent,
+    TimeAgoPipe,
+    TruncatePipe,
     
   ],
   imports: [
