@@ -48,7 +48,8 @@
   border: 2px solid blue;
 }
 
-.all, .requested {
+.all,
+.requested {
   margin-top: 20px;
   height: 40px;
   border-radius: 20px;
@@ -71,7 +72,8 @@
   width: 100px;
 }
 
-.hr, .hr2 {
+.hr,
+.hr2 {
   height: 1px;
   background-color: gray;
 }
@@ -110,8 +112,8 @@
 }
 
 .user-list {
- // margin-top: -14px;
   width: 100%;
+  // min-height: 100px;
 }
 
 .user-item {
@@ -166,7 +168,8 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  right: 10px;
+  margin-left: 230px;
+  margin-top: 40px;
 }
 
 .timeAgo {
@@ -177,6 +180,7 @@
 
 .belowName {
   margin-top: 5px;
+  
 }
 
 .lastMessage {
