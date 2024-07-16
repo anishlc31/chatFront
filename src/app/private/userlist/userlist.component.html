@@ -14,19 +14,21 @@
   <div class="hr"></div>
   <div class="mainpart">
     <div class="user-list" *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
-      <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
-      <ul>
-        <li>
-          <span class="userName">{{ user.username }}</span>
-          <span *ngIf="unseenMessages[user.id]" class="forUnseenMsg">{{ unseenMessages[user.id] }}</span>
-          <span class=" timeAgo">{{ lastMessageTimes[user.id] | timeAgo }}  </span>
+      <div class="user-item">
+        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
+        <div class="user-info">
+          <div class="user-header">
+            <span class="userName">{{ user.username }}</span>
+            <span *ngIf="unseenMessages[user.id]" class="forUnseenMsg">{{ unseenMessages[user.id] }}</span>
+            <span class="timeAgo">{{ lastMessageTimes[user.id] | timeAgo }}</span>
+          </div>
           <div class="belowName">
             <span *ngIf="typingStatus[user.id]" class="typingStatus">Typing...</span>
-            <p class="lastMessage" [ngClass]="{'seen': unseenMessages[user.id] === 0, 'unseen': unseenMessages[user.id] > 0}" *ngIf="!typingStatus[user.id]" >   {{ lastMessages[user.id] | truncate:40 }}</p>
+            <p class="lastMessage" [ngClass]="{'seen': unseenMessages[user.id] === 0, 'unseen': unseenMessages[user.id] > 0}" *ngIf="!typingStatus[user.id]">{{ lastMessages[user.id] | truncate:31 }}</p>
           </div>
-          </li>
-        <div class="hr2"></div>
-      </ul>
+        </div>
+      </div>
+      <div class="hr2"></div>
     </div>
   </div>
 </div>
