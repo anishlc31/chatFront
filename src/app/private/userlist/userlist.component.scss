@@ -48,11 +48,9 @@
   border: 2px solid blue;
 }
 
-.all {
+.all, .requested {
   margin-top: 20px;
-  margin-left: 30px;
   height: 40px;
-  width: 55px;
   border-radius: 20px;
   color: white;
   background-color: rgba(0, 0, 0, 0.932);
@@ -60,36 +58,32 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+.all {
+  margin-left: 30px;
+  width: 55px;
   margin-right: 10px;
 }
 
 .requested {
-  margin-top: 20px;
   margin-left: 10px;
-  height: 40px;
   width: 100px;
-  border-radius: 20px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.932);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+}
+
+.hr, .hr2 {
+  height: 1px;
+  background-color: gray;
 }
 
 .hr {
-  height: 1px;
   width: 100%;
-  background-color: black;
   margin-top: 10px;
 }
 
 .hr2 {
-  height: 1px;
-  margin-left: 4px;
-
   width: 98%;
-  background-color: gray;
+  margin-left: 4px;
 }
 
 .mainpart {
@@ -97,13 +91,32 @@
   overflow: scroll;
 }
 
+
+
+.mainpart::-webkit-scrollbar {
+  width: 3px;
+  border: solid 10px black;
+}
+
+.mainpart::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 1px;
+}
+
+.mainpart::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+.mainpart::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.808);
+}
+
 //for user list
 
 .user-list {
   margin-top: -14px;
   width: 100%;
-  //padding: 10px;
-  border-right: 1px solid #ddd;
+
 }
 
 .user-list ul {
@@ -190,5 +203,3 @@
   font-weight: 700;
   font-size: 15px;
 }
-
-
