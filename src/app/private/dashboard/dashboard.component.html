@@ -8,11 +8,20 @@
       <div class="profilePic"></div>
     </div>
     <app-userlist 
-    [users]="users" 
-    [selectedUser]="selectedUser" 
-    (userSelected)="onUserSelected($event)">
-  </app-userlist>  </div>
+      [users]="users" 
+      [selectedUser]="selectedUser" 
+      (userSelected)="onUserSelected($event)">
+    </app-userlist>  
+  </div>
   <div class="rightside">
-    <app-chat [selectedUser]="selectedUser"></app-chat>
+    <div *ngIf="!selectedUser" class="backgroundcolor" >
+      <div class="background" >
+        <div class="chatImage">
+          <img src="./assets/logo/logo3.png" class="logoTwo" alt="Chat Icon">
+          <p class="logoName">Chat 31</p>
+        </div>
+      </div>
+    </div>
+    <app-chat  [selectedUser]="selectedUser"></app-chat>
   </div>
 </div>
