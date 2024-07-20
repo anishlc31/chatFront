@@ -46,10 +46,6 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         }
       });
 
-
-      
-
-
       //chat status 
 
       this.webSocketService.getStatusUpdate((statusUpdate: { messageId: string; status: string }) => {
@@ -65,15 +61,8 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
         }
       });
 
-
-
-     
     }
   }
-
-
-
-  
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedUser'] && changes['selectedUser'].currentValue && this.currentUser) {

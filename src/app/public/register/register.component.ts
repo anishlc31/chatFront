@@ -28,7 +28,7 @@ export class RegisterComponent {
       this.userService.signup({
         email: this.email.value,
         password: this.password.value,
-        Username: this.username.value
+        username: this.username.value
       }).pipe(
         tap(() => this.router.navigate(['../login']))
       ).subscribe();

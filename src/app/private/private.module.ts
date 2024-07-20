@@ -28,7 +28,7 @@ import { TruncatePipe } from './pipes/truncate.pipe';
     ChatComponent,
     UserlistComponent,
     TimeAgoPipe,
-    TruncatePipe,
+    TruncatePipe
     
   ],
   imports: [

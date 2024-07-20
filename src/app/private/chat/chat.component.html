@@ -1,15 +1,23 @@
-<div class="chat-container"  *ngIf="selectedUser">
-
+<div class="chat-container" *ngIf="selectedUser">
   <div class="chat-box">
     <div class="chat-header">
       <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
-        <h2 class="headingUserName">{{selectedUser.username}}</h2>
+      <h2 class="headingUserName">{{selectedUser.username}}</h2>
     </div>
     <div class="chat-messages" #messageContainer>
-       <div class="userpic">
-        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
-       </div>
-      <!-- <button *ngIf="messages.length >= displayedMessagesCount" (click)="loadMoreMessages()">See More</button> -->
+      <!-- User picture always at the top of the messages -->
+      <div class="userpic-container">
+        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPPtwo
+.userPP {
+  position: absolute;
+  margin-top: 2px;
+  margin-left: 50px;
+  height: 45px;
+  width: 45;
+  border-radius: 50%;
+}" alt="">
+      </div>
+      <!-- Chat messages -->
       <div *ngFor="let message of messages" [class.own]="message.senderId === currentUser?.id" class="message-box">
         <div class="message-content">
           {{ message.content }}

@@ -21,7 +21,7 @@ export class DashboardComponent  {
 
 
   onUserSelected(user: UserI): void {
-    this.selectedUser = user;
+    this.selectedUser = user;    
   }
 
 }
