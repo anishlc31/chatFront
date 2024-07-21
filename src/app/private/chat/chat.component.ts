@@ -73,6 +73,19 @@ export class ChatComponent implements OnInit, OnChanges, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
+    this.updateMessageStatusPositions();
+
+  }
+
+
+  updateMessageStatusPositions(): void {
+    const messageElements = this.messageContainer.nativeElement.querySelectorAll('.message-box');
+    messageElements.forEach((messageElement: HTMLElement, index: number) => {
+      const statusElement = messageElement.querySelector('.message-status') as HTMLElement;
+      if (statusElement && index === messageElements.length - 1) {
+        statusElement.style.bottom = '-20px'; 
+      }
+    });
   }
 
   sendMessage(): void {
