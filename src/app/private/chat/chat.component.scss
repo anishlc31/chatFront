@@ -51,32 +51,44 @@
   z-index: 1;
 }
 
-
-.message-box {
-  margin-bottom: 10px;
-  max-width: 60%;
+.message-content {
+  display: flex;
+  flex-direction: column;
+  //margin-bottom: 10px;
+  min-width:100% ;
+  max-width: 80%;
   padding: 10px;
   border-radius: 10px;
   word-wrap: break-word;
 }
 
 .message-box.own {
-  background-color: #007bff;
-  color: white;
-  align-self: flex-end;
+  align-self: flex-start;
+  margin-left: 5%;
 }
 
 .message-box:not(.own) {
-  background-color: #e0e0e0;
-  color: black;
-  align-self: flex-start;
+  align-self: flex-end;
+  margin-right: 5%;
+
 }
 
+.message-content {
+  background-color: gray;
+  color: white;
+}
+
+.message-box:not(.own) .message-content {
+  background-color: #00ff00;
+  color: black;
+}
 
 .message-status {
   margin-top: 5px;
   font-size: 0.8em;
-  color: #888;
+  color:black;
+  text-align: end;
+  justify-content: end;
 }
 
 .chat-input {
