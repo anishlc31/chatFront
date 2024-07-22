@@ -7,15 +7,7 @@
     <div class="chat-messages" #messageContainer>
       <!-- User picture always at the top of the messages -->
       <div class="userpic-container">
-        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPPtwo
-.userPP {
-  position: absolute;
-  margin-top: 2px;
-  margin-left: 50px;
-  height: 45px;
-  width: 45;
-  border-radius: 50%;
-}" alt="">
+        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPPtwo" alt="">
       </div>
       <!-- Chat messages -->
       <div *ngFor="let message of messages" [class.own]="message.senderId === currentUser?.id" class="message-box">
