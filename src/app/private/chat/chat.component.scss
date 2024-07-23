@@ -2,6 +2,8 @@
   display: flex;
   height: 99.9vh;
   background-color: rgba(0, 0, 0, 0.768);
+  min-width: 100%;
+  position: absolute;
 }
 
 .chat-box {
@@ -9,6 +11,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .chat-header {
   background-color: rgba(0, 0, 0, 0.401);
   border-bottom: 1px solid #ddd;
@@ -17,78 +20,46 @@
 }
 
 .chat-messages {
-  // margin-top: 300px;
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   background-color: lightgreen;
+  background-image: url('data:image/svg+xml,<svg width="22" height="22" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="textPattern" patternUnits="userSpaceOnUse" width="22" height="22"><text x="2" y="18" font-family="Arial" font-size="20" fill="rgba(0, 0, 0, 0.1)">31</text></pattern></defs><rect width="22" height="22" fill="url(%23textPattern)" /><line x1="0" y1="45%" x2="100%" y2="45%" stroke="rgba(144, 238, 144, 0.5)" stroke-width="1" /><line x1="0" y1="100%" x2="100%" y2="100%" stroke="rgba(144, 238, 144, 0.5)" stroke-width="1" /></svg>');
+  background-repeat: repeat;
   position: relative;
-
 }
 
-.chat-messages::after {
-//content: " 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31 31  31 31 31 31 31 31 31 31 31 31  ";
-  font-size: 20px;
-  position: absolute;
-  left: 0;
-  width: 100%;
- min-height: 83%;
- max-height:auto;
-  color: rgba(0, 0, 0, 0.1);
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 50px,
-    rgba(0, 0, 0, 0.1) 50px,
-    rgba(0, 0, 0, 0.1) 100px
-  );
-  display: flex;
-  grid-template-columns: repeat(auto-fill, 50px);
-  grid-template-rows: repeat(auto-fill, 50px);
-  justify-content: center;
-  align-content: center;
-  z-index: 1;
+
+
+
+.message-status {
+  font-size: 0.8em;
+  color: black;
+  text-align: end;
 }
 
-.message-content {
-  display: flex;
-  flex-direction: column;
-  //margin-bottom: 10px;
-  min-width:100% ;
-  max-width: 80%;
-  padding: 10px;
+.message-box {
+  margin-bottom: 10px;
+  padding: 7px;
   border-radius: 10px;
   word-wrap: break-word;
 }
 
 .message-box.own {
-  align-self: flex-start;
-  margin-left: 5%;
+  margin-right: 10px;
+  max-width: 50%;
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
 }
 
 .message-box:not(.own) {
-  align-self: flex-end;
-  margin-right: 5%;
-
-}
-
-.message-content {
-  background-color: gray;
-  color: white;
-}
-
-.message-box:not(.own) .message-content {
-  background-color: #00ff00;
+  margin-left: 20px;
+  max-width: 50%;
+  background-color: #e0e0e0;
   color: black;
-}
-
-.message-status {
-  margin-top: 5px;
-  font-size: 0.8em;
-  color:black;
-  text-align: end;
-  justify-content: end;
+  align-self: flex-start;
 }
 
 .chat-input {
@@ -118,39 +89,34 @@
   background-color: #0056b3;
 }
 
-.userPPtwo{
+.userPPtwo {
   height: 60px;
   width: 60px;
   border-radius: 50%;
-  
+  margin-bottom: 30px;
 }
+
 .userPP {
   position: absolute;
   margin-top: 2px;
   margin-left: 50px;
   height: 45px;
-  width: 45;
+  width: 45px;
   border-radius: 50%;
 }
 
-
-.headingUserName{
+.headingUserName {
   margin-left: 120px;
   color: white;
-
 }
-
 
 .userpic-container {
   display: flex;
   justify-content: center;
-  margin-top: 200px ;
-  margin-bottom: 40px;
-
+  margin-top: 40%;
 }
 
-
-.userpic{
+.userpic {
   position: absolute;
   margin-top: 100px;
   height: 300px;
@@ -159,7 +125,6 @@
   margin-bottom: 500px;
 }
 
-
 .headingUserName {
   margin-left: 120px;
   color: white;
@@ -167,6 +132,3 @@
   top: 50%;
   transform: translateY(-50%);
 }
-
-
-
