@@ -11,8 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import { LoinComponent } from './loin/loin.component';
 import { RegisterComponent } from './register/register.component';
-
-
+//lado
 @NgModule({
   declarations: [
     LoinComponent,
