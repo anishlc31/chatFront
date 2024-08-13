@@ -11,7 +11,7 @@ import { UserService } from '../user.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
-
+//why i am begin worse day by day yarr each semeter wise semter 
   form: FormGroup = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     username: new FormControl(null, [Validators.required]),
