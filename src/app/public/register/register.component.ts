@@ -52,3 +52,4 @@ export class RegisterComponent {
   }
 
 }
+//i give up 
