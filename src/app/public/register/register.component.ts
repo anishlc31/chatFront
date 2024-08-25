@@ -52,4 +52,4 @@ export class RegisterComponent {
   }
 
 }
-//i give up 
+//i give up last day of git hub strik 
