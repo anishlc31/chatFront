@@ -1,0 +1,38 @@
+<div class="friendship-container">
+    <h2>Friendship Management</h2>
+  
+    <!-- Send Friend Request -->
+    <div class="send-request">
+      <h3>Send Friend Request</h3>
+      <input
+        type="text"
+        [(ngModel)]="recipientId"
+        placeholder="Enter Recipient ID"
+      />
+      <button (click)="sendRequest()">Send Request</button>
+      <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </div>
+  
+    <!-- Pending Friend Requests -->
+    <div class="pending-requests">
+      <h3>Pending Friend Requests</h3>
+      <ul>
+        <li *ngFor="let request of pendingRequests">
+          {{ request.requester.username }}
+          <button (click)="acceptRequest(request.requester.id)">Accept</button>
+          <button (click)="rejectRequest(request.requester.id)">Reject</button>
+        </li>
+      </ul>
+    </div>
+  
+    <!-- Friend List -->
+    <div class="friend-list">
+      <h3>Friend List</h3>
+      <ul>
+        <li *ngFor="let friend of friendList">
+          {{ friend.requester.username }} or {{ friend.recipient.username }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  
