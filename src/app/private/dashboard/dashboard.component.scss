@@ -121,3 +121,41 @@
   height: 100%;
   z-index: 4;
 }
+
+
+//for add friend 
+.userlist-overlay {
+  position: fixed;
+  top: 50%;
+  left: 27%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  min-height: 600px;
+  height: auto;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  margin-top: 17px;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.userlist-overlay app-userlist {
+  height: 100%;
+}
+
+
+.notification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px; /* Adjust size as needed */
+  height: 12px;
+  background-color: green; /* Blue background */
+  color: white; /* White text */
+  font-size: 10px;
+  border-radius: 50%; /* Makes it circular */
+  position: absolute;
+  top: 10px;  /* Adjust position */
+  right: 125px; /* Adjust position */
+}

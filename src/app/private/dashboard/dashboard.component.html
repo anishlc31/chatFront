@@ -3,25 +3,45 @@
     <div class="headingpart">
       <img src="./assets/logo/logo3.png" class="logo" alt="logo">
       <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png" class="notifa" alt="">
-      <img src="https://cdn-icons-png.freepik.com/512/6469/6469169.png" class="addfrnd" alt="">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="searchIcon" alt="search" (click)="onSearchClick()">
+      <img src="https://cdn-icons-png.freepik.com/512/6469/6469169.png" 
+           class="addfrnd" 
+           alt="Add Friend" 
+           (click)="onAddFriendClick()">
+           <p *ngIf="notificationCount > 0" class="notification-badge">
+            {{ notificationCount }}
+          </p>
+          
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" 
+           class="searchIcon" 
+           alt="Search" 
+           (click)="onSearchClick()">
       <div class="profilePic"></div>
     </div>
-    <app-userlist 
+
+    <app-friendship 
       [users]="users" 
       [selectedUser]="selectedUser" 
       (userSelected)="onUserSelected($event)">
-    </app-userlist>  
+    </app-friendship>  
   </div>
+
+  <!-- Userlist Overlay -->
+  <div *ngIf="showUserList" class="userlist-overlay">
+    <app-userlist 
+      [users]="users" 
+      [selectedUser]="selectedUser">
+    </app-userlist>
+  </div>
+
   <div class="rightside">
-    <div *ngIf="!selectedUser" class="backgroundcolor" >
-      <div class="background" >
+    <div *ngIf="!selectedUser" class="backgroundcolor">
+      <div class="background">
         <div class="chatImage">
           <img src="./assets/logo/logo3.png" class="logoTwo" alt="Chat Icon">
           <p class="logoName">Chat 31</p>
         </div>
       </div>
     </div>
-    <app-chat  [selectedUser]="selectedUser"></app-chat>
+    <app-chat [selectedUser]="selectedUser"></app-chat>
   </div>
 </div>
