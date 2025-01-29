@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FriendshipService } from '../friendship.service';
-import { UserI } from 'src/app/model/user.interface';
+import { Conversation, UserI } from 'src/app/model/user.interface';
 import { UserService } from 'src/app/public/user.service';
+import { ChatService } from '../chat.service';
 
 @Component({
   selector: 'app-friendship',
@@ -10,75 +11,114 @@ import { UserService } from 'src/app/public/user.service';
 })
 export class FriendshipComponent implements OnInit {
   friendList: any[] = [];
-  pendingRequests: any[] = [];
-  recipientId: string = '';
-  errorMessage: string = '';
+ 
   currentUser: UserI | null = null;
 
-  constructor(private friendshipService: FriendshipService, private userService: UserService
+
+    showSearchInput: boolean = false;
+    @Input() selectedUser: UserI | null = null;
+    @Input() users: UserI[] = [];
+  
+    @Input() typingStatus: { [key: string]: boolean } = {};
+    @Output() userSelected = new EventEmitter<UserI>();
+  
+    conversations: Conversation[] = [];
+    unseenMessages: { [key: string]: number } = {};
+    lastMessages: { [key: string]: string } = {};
+    lastMessageTimes: { [key: string]: Date } = {};
+    updateChatAtMap: { [key: string]: Date } = {};
+  
+  
+   
+
+  constructor(private friendshipService: FriendshipService,
+     private userService: UserService,
+         private webSocketService: ChatService,
+     
+
   ) {}
 
   ngOnInit(): void {
    this.currentUser =  this.userService.getCurrentUser();
-   console.log("hello"+this.currentUser.id)
-    this.getFriends();
-    this.getPendingRequests();
-  }
 
-  getFriends(): void {
-    this.friendshipService.getFriendList().subscribe({
-      next: (data) => (this.friendList = data),
-      error: (err) => console.error(err),
-    });
-  }
+    if (this.currentUser) {
+   
+      this.fetchFriendList()
 
-  getPendingRequests(): void {
-    this.friendshipService.getPendingRequests().subscribe({
-      next: (data) => (this.pendingRequests = data),
-      error: (err) => console.error(err),
-    });
-  }
+      this.webSocketService.getUnseenMessageCounts((counts: any) => {
+        this.unseenMessages = counts;
+      });
 
-  sendRequest(): void {
-    if (!this.recipientId) {
-      this.errorMessage = 'Recipient ID is required.';
-      return;
+      this.webSocketService.requestUnseenMessageCounts(this.currentUser.id);
+
+      this.webSocketService.onUserTyping((data) => {
+        this.typingStatus[data.senderId] = data.typing;
+      });
+
+      this.webSocketService.getConversationUpdate((conversation) => {
+        const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
+        this.updateChatAtMap[userId] = conversation.updateChatAt;
+        this.lastMessages[userId] = conversation.lastMessage;
+        this.lastMessageTimes[userId] = conversation.lastMessageTime;
+        this.sortUsersByUpdateChatAt();
+      });
     }
+  }
 
-    this.friendshipService.sendFriendRequest(this.recipientId).subscribe({
-      next: () => {
-        this.errorMessage = '';
-        this.getPendingRequests();
-        alert('Friend request sent!');
+ 
+  fetchFriendList(): void {
+    this.friendshipService.getFriendList().subscribe(
+      (data) => {
+        console.log('Raw friend list:', data); // Debug raw data
+  
+        // Process the friend list and exclude the current user
+        this.friendList = data
+          .filter((friend) => 
+            friend.requester.id === this.currentUser!.id || friend.recipient.id === this.currentUser!.id
+          )
+          .map((friend) => 
+            friend.requester.id === this.currentUser!.id ? friend.recipient : friend.requester
+          );
+  
+        // Log the processed friend list for debugging
+        console.log('Processed friend list:', this.friendList);
+  
+        // Fetch and sort conversations for these friends
+        this.fetchAndSortConversations();
       },
-      error: (err) => {
-        this.errorMessage = err.error.message || 'An error occurred.';
-      },
+      (error) => {
+        console.error('Error fetching friend list:', error); // Debug error
+      }
+    );
+  }
+  
+  
+
+
+  fetchAndSortConversations(): void {
+    if (this.currentUser) {
+      this.webSocketService.getConversations(this.currentUser.id).subscribe((conversations) => {
+        conversations.forEach(conversation => {
+          const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
+          this.updateChatAtMap[userId] = conversation.updateChatAt;
+          this.lastMessages[userId] = conversation.lastMessage;
+          this.lastMessageTimes[userId] = conversation.lastMessageTime;
+        });
+        this.sortUsersByUpdateChatAt();
+      });
+    }
+  }
+
+  sortUsersByUpdateChatAt(): void {
+    this.users.sort((a, b) => {
+      const aUpdate = this.updateChatAtMap[a.id!] || new Date(0);
+      const bUpdate = this.updateChatAtMap[b.id!] || new Date(0);
+      return new Date(bUpdate).getTime() - new Date(aUpdate).getTime();
     });
   }
 
-  acceptRequest(requesterId: string): void {
-    this.friendshipService
-      .updateFriendshipStatus(requesterId,  this.currentUser.id , 'ACCEPTED') // Replace 'currentUserId' with the actual user ID
-      .subscribe({
-        next: () => {
-          this.getFriends();
-          this.getPendingRequests();
-          alert('Friend request accepted!');
-        },
-        error: (err) => console.error(err),
-      });
+  onUserSelect(user: UserI): void {
+    this.userSelected.emit(user);
   }
 
-  rejectRequest(requesterId: string): void {
-    this.friendshipService
-      .updateFriendshipStatus(requesterId, this.currentUser.id, 'REJECTED') // Replace 'currentUserId' with the actual user ID
-      .subscribe({
-        next: () => {
-          this.getPendingRequests();
-          alert('Friend request rejected!');
-        },
-        error: (err) => console.error(err),
-      });
-  }
 }
