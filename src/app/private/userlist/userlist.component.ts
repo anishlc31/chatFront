@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Conversation, UserI } from 'src/app/model/user.interface';
+import { Component, Input } from '@angular/core';
+import { UserI } from 'src/app/model/user.interface';
 import { UserlistService } from './../userlist.service';
-import { ChatService } from '../chat.service';
 import { UserService } from 'src/app/public/user.service';
+import { FriendshipService } from '../friendship.service';
 
 @Component({
   selector: 'app-userlist',
@@ -13,78 +13,96 @@ export class UserlistComponent {
   showSearchInput: boolean = false;
   @Input() selectedUser: UserI | null = null;
   @Input() users: UserI[] = [];
-  @Input() typingStatus: { [key: string]: boolean } = {};
-  @Output() userSelected = new EventEmitter<UserI>();
-
   currentUser: UserI | null = null;
-  conversations: Conversation[] = [];
-  unseenMessages: { [key: string]: number } = {};
-  lastMessages: { [key: string]: string } = {};
-  lastMessageTimes: { [key: string]: Date } = {};
-  updateChatAtMap: { [key: string]: Date } = {};
+  friendList: any[] = [];
+  pendingRequests: any[] = [];
+  //recipientId: string = '';
+  errorMessage: string = '';
+
 
   constructor(
     private userlistService: UserlistService,
-    private webSocketService: ChatService,
-    private userService: UserService
+    private userService: UserService,
+    private friendshipService: FriendshipService
   ) {}
 
   ngOnInit() {
+      this.getPendingRequests();
     this.userlistService.searchClicked$.subscribe(() => {
       this.showSearchInput = !this.showSearchInput;
     });
 
-    this.currentUser = this.userService.getCurrentUser();
-
-    if (this.currentUser) {
-      this.userService.getAllUsers().subscribe((data) => {
-        this.users = data.filter(user => user.id !== this.currentUser!.id);
-        this.fetchAndSortConversations();
-      });
-
-      this.webSocketService.getUnseenMessageCounts((counts: any) => {
-        this.unseenMessages = counts;
-      });
-
-      this.webSocketService.requestUnseenMessageCounts(this.currentUser.id);
-
-      this.webSocketService.onUserTyping((data) => {
-        this.typingStatus[data.senderId] = data.typing;
-      });
-
-      this.webSocketService.getConversationUpdate((conversation) => {
-        const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
-        this.updateChatAtMap[userId] = conversation.updateChatAt;
-        this.lastMessages[userId] = conversation.lastMessage;
-        this.lastMessageTimes[userId] = conversation.lastMessageTime;
-        this.sortUsersByUpdateChatAt();
-      });
-    }
+    this.loadUsers();
   }
-
-  fetchAndSortConversations(): void {
+  private loadUsers(): void {
+    this.currentUser = this.userService.getCurrentUser(); // Get the current user details
+  
     if (this.currentUser) {
-      this.webSocketService.getConversations(this.currentUser.id).subscribe((conversations) => {
-        conversations.forEach(conversation => {
-          const userId = conversation.user1Id === this.currentUser!.id ? conversation.user2Id : conversation.user1Id;
-          this.updateChatAtMap[userId] = conversation.updateChatAt;
-          this.lastMessages[userId] = conversation.lastMessage;
-          this.lastMessageTimes[userId] = conversation.lastMessageTime;
+      // Fetch excluded user IDs
+      this.friendshipService.getExcludedUserIds().subscribe((excludedIds) => {
+        // Fetch all users
+        this.userService.getAllUsers().subscribe((allUsers) => {
+          // Filter out excluded users and the current user
+          this.users = allUsers.filter(
+            (user) => !excludedIds.includes(user.id) && user.id !== this.currentUser.id
+          );
+          console.log('Filtered Users:', this.users); // Debugging log
         });
-        this.sortUsersByUpdateChatAt();
       });
     }
   }
+  
 
-  sortUsersByUpdateChatAt(): void {
-    this.users.sort((a, b) => {
-      const aUpdate = this.updateChatAtMap[a.id!] || new Date(0);
-      const bUpdate = this.updateChatAtMap[b.id!] || new Date(0);
-      return new Date(bUpdate).getTime() - new Date(aUpdate).getTime();
+
+  getPendingRequests(): void {
+    this.friendshipService.getPendingRequests().subscribe({
+      next: (data) => (this.pendingRequests = data),
+      error: (err) => console.error(err),
     });
   }
+  sendRequest(recipientId: string): void {
+    if (!recipientId) {
+      this.errorMessage = 'Recipient ID is required.';
+      return;
+    }
 
-  onUserSelect(user: UserI): void {
-    this.userSelected.emit(user);
+    this.friendshipService.sendFriendRequest(recipientId).subscribe({
+      next: () => {
+        this.errorMessage = '';
+      //  this.getPendingRequests();
+        alert('Friend request sent!');
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message || 'An error occurred.';
+      },
+    });
+
+  
+  }
+
+
+
+  acceptRequest(requesterId: string): void {
+    this.friendshipService
+      .updateFriendshipStatus(requesterId,  this.currentUser.id , 'ACCEPTED') // Replace 'currentUserId' with the actual user ID
+      .subscribe({
+        next: () => {
+          this.getPendingRequests();
+          alert('Friend request accepted!');
+        },
+        error: (err) => console.error(err),
+      });
+  }
+
+  rejectRequest(requesterId: string): void {
+    this.friendshipService
+      .updateFriendshipStatus(requesterId, this.currentUser.id, 'REJECTED') // Replace 'currentUserId' with the actual user ID
+      .subscribe({
+        next: () => {
+          this.getPendingRequests();
+          alert('Friend request rejected!');
+        },
+        error: (err) => console.error(err),
+      });
   }
 }

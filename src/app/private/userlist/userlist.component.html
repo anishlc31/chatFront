@@ -1,30 +1,53 @@
 <div class="userlist">
-  <div class="userheading">
-    <div class="search">
-      <div class="search-container" *ngIf="showSearchInput">
-        <input type="text" placeholder="Search">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="search-icon" alt="search">
+  <!-- Section for Incoming Friend Requests -->
+  <div class="incoming-requests">
+    <h3>Incoming Friend Requests</h3>
+    <div class="request-item" *ngFor="let request of pendingRequests">
+      <div class="user-item">
+        <img
+          src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+          class="userPP"
+          alt="User Profile Picture"
+        />
+        <div class="user-info">
+          <div class="user-header">
+            <span class="userName">{{ request.requester.username }}</span>
+          </div>
+          <div class="user-actions">
+            <button class="btn-accept" (click)="acceptRequest(request.requester.id)">Accept</button>
+            <button class="btn-decline" (click)="rejectRequest(request.requester.id)">Decline</button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="read">
-      <div class="all">All</div>
-      <div class="requested">Requested</div>
-    </div>
   </div>
-  <div class="hr"></div>
-  <div class="mainpart">
-    <div class="user-list" *ngFor="let user of users" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
+
+  <!-- Section for Add Friends -->
+  <div class="add-friend-list">
+    <h3>Add Friends</h3>
+    <div class="add-friend-item" *ngFor="let user of users">
       <div class="user-item">
-        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
+        <!-- Profile Picture and Name -->
+        <img
+          src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+          class="userPP"
+          alt="User Profile Picture"
+        />
+
         <div class="user-info">
           <div class="user-header">
             <span class="userName">{{ user.username }}</span>
-            <span *ngIf="unseenMessages[user.id]" class="forUnseenMsg">{{ unseenMessages[user.id] }}</span>
-            <span class="timeAgo">{{ lastMessageTimes[user.id] | timeAgo }}</span>
           </div>
-          <div class="belowName">
-            <span *ngIf="typingStatus[user.id]" class="typingStatus">Typing...</span>
-            <p class="lastMessage" [ngClass]="{'seen': unseenMessages[user.id] === 0, 'unseen': unseenMessages[user.id] > 0}" *ngIf="!typingStatus[user.id]">{{ lastMessages[user.id] | truncate:31 }}</p>
+        </div>
+
+        <!-- Icons on the Right Side -->
+        <div class="icons-container">
+          <div class="icon-container" >
+            <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" class="msg-icon" alt="Message User" />
+          </div>
+
+          <div class="icon-container" (click)="sendRequest(user.id)">
+            <img src="https://cdn-icons-png.freepik.com/512/6469/6469169.png" class="addfrnd" alt="Add Friend" />
           </div>
         </div>
       </div>
@@ -32,4 +55,3 @@
     </div>
   </div>
 </div>
-<!-- second day of the streak  -->
