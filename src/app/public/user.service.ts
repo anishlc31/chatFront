@@ -46,9 +46,14 @@ export class UserService {
     return this.http.get<UserI[]>(`${this.apiUrl}/find-by-username?username=${username}`);
   }
 
+
+  //instead of geting all user we have on fetch only they are friends 
   getAllUsers(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users`);
   }
+
+
+  
 
   getCurrentUser(): UserI | null {
     const token = localStorage.getItem('nestjs_chat_app');
@@ -63,4 +68,3 @@ export class UserService {
     return null;
   }
 }
-//can't focus anymore haaa
