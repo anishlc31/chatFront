@@ -1,0 +1,34 @@
+<div class="search-container">
+    <!-- Right Arrow and Search Button -->
+    <div class="top-bar">
+      <button class="arrow-btn"><img src="assets/right-arrow.png" alt="Arrow"></button>
+      <button class="search-btn" (click)="toggleSearch()">
+        <img src="assets/search-icon.png" alt="Search">
+      </button>
+    </div>
+  
+    <!-- Search Input -->
+    <input
+      type="text"
+      placeholder="Search"
+      [(ngModel)]="searchQuery"
+      (focus)="showSuggestions = true"
+      *ngIf="showSuggestions"
+    />
+  
+    <!-- Suggestions -->
+    <div class="suggestions" *ngIf="showSuggestions">
+      <p *ngFor="let user of filteredUsers" (click)="selectUser(user)">
+        {{ user.username }}
+      </p>
+    </div>
+  
+    <!-- User List -->
+    <div class="user-list" *ngIf="showSuggestions">
+      <div *ngFor="let user of filteredUsers" (click)="selectUser(user)">
+        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="user-pp">
+        <span>{{ user.username }}</span>
+      </div>
+    </div>
+  </div>
+  
