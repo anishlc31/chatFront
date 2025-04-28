@@ -1,19 +1,32 @@
 <div class="userlist">
   <div class="userheading">
-    <div class="search">
-      <div class="search-container" *ngIf="showSearchInput">
-        <input type="text" placeholder="Search">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="search-icon" alt="search">
+    <!-- Search Bar -->
+    <div class="search-container" (click)="onSearchContainerClick()">
+      <input type="text" placeholder="Search" class="search-input">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" class="search-icon" alt="search">
+    </div>
+
+    <!-- Friends Profile Pictures Row -->
+    <div class="friends-row">
+      <div class="friend-item" *ngFor="let friend of friendList"  [class.selected]="friend === selectedUser" (click)="onUserSelect(friend)">
+        <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+             class="friend-pp" alt="User Profile Picture">
+        <span class="friend-name">{{ friend.username.split(' ')[0] }}</span>
       </div>
     </div>
-    <div class="read">
-      <div class="all">All</div>
-      <div class="requested">Requested</div>
-    </div>
   </div>
-  <div class="hr"></div>
+
+
+  <div class="menu">
+    <span class="menu-item" >Message</span>
+    <span class="menu-item request" >Request</span>
+  </div>
+  
+  
+
+
   <div class="mainpart">
-    <div class="user-list"*ngFor="let user of friendList" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
+    <div class="user-list" *ngFor="let user of messageList" [class.selected]="user === selectedUser" (click)="onUserSelect(user)">
       <div class="user-item">
         <img src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg" class="userPP" alt="">
         <div class="user-info">
@@ -28,7 +41,6 @@
           </div>
         </div>
       </div>
-      <div class="hr2"></div>
     </div>
   </div>
 </div>

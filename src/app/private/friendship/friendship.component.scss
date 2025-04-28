@@ -14,83 +14,12 @@
   position: relative;
 }
 
-.search-container {
-  margin-left: 30px;
-  position: relative;
-  width: 200px;
-}
 
-.search-container input {
-  width: 100%;
-  height: 15px;
-  padding: 10px 40px 10px 50px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 10px;
-  outline: none;
-  transition: border-color 0.3s;
-}
 
-.search-container .search-icon {
-  position: absolute;
-  top: 55%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-}
-
-.search-container input::placeholder {
-  padding: 50px;
-  font-weight: 600;
-}
-
-.search-container input:focus {
-  border: 2px solid blue;
-}
-
-.all,
-.requested {
-  margin-top: 20px;
-  height: 40px;
-  border-radius: 20px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.932);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.all {
-  margin-left: 30px;
-  width: 55px;
-  margin-right: 10px;
-}
-
-.requested {
-  margin-left: 10px;
-  width: 100px;
-}
-
-.hr,
-.hr2 {
-  height: 1px;
-  background-color: gray;
-}
-
-.hr {
-  width: 100%;
-  margin-top: 10px;
-}
-
-.hr2 {
-  width: 98%;
-  margin-left: 4px;
-}
 
 .mainpart {
-  height: 90vh;
-  overflow-y: scroll;
+  height: 67vh;
+  overflow: scroll;
 }
 
 .mainpart::-webkit-scrollbar {
@@ -113,7 +42,7 @@
 
 .user-list {
   width: 100%;
-  // min-height: 100px;
+  //min-height: 100px;
 }
 
 .user-item {
@@ -201,3 +130,90 @@
   font-weight: 700;
   font-size: 15px;
 }
+
+/* Search Bar */
+/* Search Bar */
+.search-container {
+  display: flex;
+  align-items: center;
+  width: 80%;
+  background-color: #f0f2f5;
+  padding: 5px 10px; /* Adjusted padding for height */
+  border-radius: 20px;
+  margin: 10px auto;
+  position: relative;
+  height: 20px; /* Set height to 20px */
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding-left: 25px;
+  font-size: 14px; /* Adjusted for smaller height */
+  height: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 5px;
+  width: 30px;
+  height: 30px;
+}
+
+
+/* Friends Row */
+.friends-row {
+  display: flex;
+  gap: 17px;
+  padding: 10px;
+  background: none; /* remove background if any */
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;  
+}
+
+
+.friend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.friend-pp {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+}
+
+.friend-name {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+.menu {
+  display: flex;
+  justify-content: space-between; 
+  padding: 0 20px; 
+  margin: 10px 0;
+}
+
+.menu-item {
+  color: white;
+  font-weight: bold;
+  font: optional;
+  cursor: pointer;
+}
+
+.request{
+  cursor: pointer;
+
+}
+
+
