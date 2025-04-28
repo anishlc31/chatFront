@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UserService } from 'src/app/public/user.service';
 import { UserI } from 'src/app/model/user.interface';
 import { UserlistService } from '../userlist.service';
@@ -15,6 +15,8 @@ export class DashboardComponent implements OnInit {
   showUserList: boolean = false; // State for displaying the userlist
   currentUser: UserI | null = null;
   notificationCount: number = 0;
+  @Input() showSearch: boolean = false;
+
 
   constructor(
     private userService: UserService, 
@@ -58,9 +60,9 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onSearchClick() {
-    this.userlistservice.triggerSearchClick();
-  }
+  // onSearchClick() {
+  //   this.userlistservice.triggerSearchClick();
+  // }
 
   onAddFriendClick() {
     this.showUserList = !this.showUserList; // Toggle userlist visibility
@@ -71,4 +73,11 @@ export class DashboardComponent implements OnInit {
     this.selectedUser = user;
     this.showUserList = false; // Hide userlist after selecting a user
   }
+
+  onSearchClick(): void {
+    this.showSearch = !this.showSearch;
+  }
+
+
+
 }

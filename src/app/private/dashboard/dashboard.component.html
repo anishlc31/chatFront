@@ -7,10 +7,9 @@
            class="addfrnd" 
            alt="Add Friend" 
            (click)="onAddFriendClick()">
-           <p *ngIf="notificationCount > 0" class="notification-badge">
-            {{ notificationCount }}
-          </p>
-          
+      <p *ngIf="notificationCount > 0" class="notification-badge">
+        {{ notificationCount }}
+      </p>
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/VisualEditor_-_Icon_-_Search.svg/2048px-VisualEditor_-_Icon_-_Search.svg.png" 
            class="searchIcon" 
            alt="Search" 
@@ -19,17 +18,29 @@
     </div>
 
     <app-friendship 
-      [users]="users" 
-      [selectedUser]="selectedUser" 
-      (userSelected)="onUserSelected($event)">
-    </app-friendship>  
+    *ngIf="!showSearch"
+    [users]="users" 
+    [selectedUser]="selectedUser" 
+    (userSelected)="onUserSelected($event)"
+    (searchClicked)="onSearchClick()">
+  </app-friendship>
+
+  <app-search 
+  *ngIf="showSearch"
+  [showSearch]="showSearch"
+  [selectedUser]="selectedUser"
+  (showSearchChange)="showSearch = $event"
+  (userSelected)="onUserSelected($event)">
+</app-search>
+
   </div>
 
   <!-- Userlist Overlay -->
   <div *ngIf="showUserList" class="userlist-overlay">
     <app-userlist 
       [users]="users" 
-      [selectedUser]="selectedUser">
+      [selectedUser]="selectedUser"
+      >
     </app-userlist>
   </div>
 
@@ -42,6 +53,10 @@
         </div>
       </div>
     </div>
-    <app-chat [selectedUser]="selectedUser"></app-chat>
+    <app-chat [selectedUser]="selectedUser"
+
+     ></app-chat>
   </div>
 </div>
+
+
